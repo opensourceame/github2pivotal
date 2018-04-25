@@ -1,10 +1,9 @@
 github:
   username:           my_github_user
   password:           my_github_password
-  repository:         mypage/repo
+  repository:         MyOrganisation/my_repo
   migrate_labels:
     - icebox
-
 
 pivotal:
   api_token:          my_pt_token

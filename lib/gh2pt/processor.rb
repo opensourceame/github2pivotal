@@ -1,7 +1,11 @@
-module Migrator
+module GitHub2PivotalTracker
   class Processor
 
     attr_reader :config, :options, :logger, :gh_client, :pt_client, :project, :stories, :issues
+
+    DEFAULT_OPTIONS = {
+      dry_run:      false,
+    }.freeze
 
     def initialize(**options)
       @options  = options
@@ -22,7 +26,7 @@ module Migrator
     end
 
     def load_config
-      @config = RecursiveOpenStruct.new(YAML.load_file('config.yaml'))
+      @config = RecursiveOpenStruct.new(::YAML.load_file('config.yaml'))
     end
 
     def setup_clients
@@ -40,6 +44,8 @@ module Migrator
     end
 
     def fetch_gh_issues
+      logger.debug "fetching issues from GitHub"
+
       @issues = gh_client.issues(gh_repo)
     end
 
@@ -48,11 +54,17 @@ module Migrator
     end
 
     def fetch_pt_stories
+
+      logger.debug "fetching stories from Pivotal Tracker"
+
       @stories = project.stories
       @idx_migrated_issues = @stories.map {|s| s.external_id.to_i }
     end
 
     def process_issues
+
+      logger.info "found #{issues.count} issues to process"
+
       issues.each do |issue|
         next if issue_migrated?(issue)
         process_issue(issue)
@@ -63,15 +75,21 @@ module Migrator
 
       logger.debug "processing issue #{issue.number}"
 
-      parser = Migrator::GitHubIssueParser.new(self, issue)
+      parser = GitHub2PivotalTracker::GitHub::IssueParser.new(self, issue)
       parser.parse
 
-      story = project.create_story(parser.story_data)
+      if options[:dry_run]
 
-      add_story_tasks(story, parser.tasks)
-      add_story_comments(story, parser.comments)
+        logger.debug "would create issue: \n\n" + parser.story_data_pretty
+      else
 
-      logger.debug "created story #{story.id}"
+        story = project.create_story(parser.story_data)
+
+        add_story_tasks(story, parser.tasks)
+        add_story_comments(story, parser.comments)
+
+        logger.debug "created story #{story.id}"
+      end
 
       story
 
