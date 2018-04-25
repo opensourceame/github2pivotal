@@ -1,0 +1,15 @@
+github:
+  username:           my_github_user
+  password:           my_github_password
+  repository:         mypage/repo
+  migrate_labels:
+    - icebox
+
+
+pivotal:
+  api_token:          my_pt_token
+  project_id:         12345
+  integration_id:     123
+
+gh_to_pt_users:
+  my_github_user:     12345
