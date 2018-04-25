@@ -1,6 +1,6 @@
 ## GitHub 2 Pivotal Tracker
 
-This project migrates issues from GitHub to Pivotal Tracker, including comments and tasks.
+This project migrates issues from GitHub to Pivotal Tracker, including comments, labels and tasks.
 
 Pivotal Tracker's tasks are global for the issue, thus tasks defined in different comments in a
 GitHub issue will be extracted from the comments and added to the global tasks.
@@ -36,7 +36,8 @@ Run `./gh2pt.rb`
 Some features I'd like to add:
 
 * migration of attachments to Pivotal Tracker's server
-
+* an option to erase stories from the PT repo for a clean start without having to create a new repo
+* Rspec tests
 
 ### License
 

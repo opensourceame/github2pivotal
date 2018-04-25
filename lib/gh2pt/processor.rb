@@ -26,7 +26,7 @@ module GitHub2PivotalTracker
     end
 
     def load_config
-      @config = RecursiveOpenStruct.new(::YAML.load_file('config.yaml'))
+      @config = RecursiveOpenStruct.new(YAML.load_file('config.yaml'))
     end
 
     def setup_clients
