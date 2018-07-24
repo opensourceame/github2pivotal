@@ -4,6 +4,8 @@ module GitHub2PivotalTracker
 
       attr_reader :processor, :config, :logger, :issue, :story_type, :estimate, :title, :description, :user_map, :gh_client, :tasks, :comments, :labels
 
+      TASK_REGEX = /-\ (\[.+\]\ .*)/.freeze
+
       def initialize(processor, issue)
         @processor = processor
         @issue     = issue
@@ -109,7 +111,7 @@ module GitHub2PivotalTracker
       def parse_story_type
 
         issue.labels.each do |label|
-          return :bug if label.name == 'bug'
+          return :bug     if label.name == 'bug'
           return :feature if label.name == 'enhancement'
           return :feature if label.name == 'proposal'
         end
@@ -124,7 +126,7 @@ module GitHub2PivotalTracker
 
         lines.each do |line|
 
-          if line =~ /-\ (\[.+\]\ .*)/
+          if line =~ TASK_REGEX
             extract_task(line)
           else
             desc << line

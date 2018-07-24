@@ -4,7 +4,7 @@ module GitHub2PivotalTracker
     attr_reader :config, :options, :logger, :gh_client, :pt_client, :project, :stories, :issues
 
     DEFAULT_OPTIONS = {
-      dry_run:      false,
+      dry_run: false,
     }.freeze
 
     def initialize(**options)
@@ -44,9 +44,14 @@ module GitHub2PivotalTracker
     end
 
     def fetch_gh_issues
-      logger.debug "fetching issues from GitHub"
+      opts  = {}
+      state = config.options.state
 
-      @issues = gh_client.issues(gh_repo)
+      logger.debug "fetching #{state} issues from GitHub"
+
+      opts[:state] = state if state
+
+      @issues = gh_client.issues(gh_repo, opts)
     end
 
     def fetch_pt_project
@@ -57,8 +62,9 @@ module GitHub2PivotalTracker
 
       logger.debug "fetching stories from Pivotal Tracker"
 
-      @stories = project.stories
-      @idx_migrated_issues = @stories.map {|s| s.external_id.to_i }
+      @stories             = project.stories
+      @idx_migrated_issues = @stories.map { |s| s.external_id.to_i }
+
     end
 
     def process_issues

@@ -1,3 +1,7 @@
+options:
+  # which states to migrate, open issues, closed or all
+  state:              open
+
 github:
   username:           my_github_user
   password:           my_github_password
